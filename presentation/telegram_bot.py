@@ -20,7 +20,13 @@ async def download_and_process_audio(update: Update, context):
     service = AudioService(converter, storage, downloader)
 
     try:
+        # مشخص کردن مسیر ذخیره فایل دانلود شده
+        destination_path = "downloaded_audio"
+        await downloader.download(file_info, destination_path)
+
+        # فراخوانی سرویس پردازش صدا
         peak_audio_path = service.process_and_store_audio(file_info, segment_duration=30)
+        
         await context.bot.send_voice(chat_id=update.effective_chat.id, voice=open(peak_audio_path, "rb"), reply_to_message_id=update.message.message_id)
     except Exception as e:
         await update.message.reply_text(f"خطا در پردازش فایل صوتی: {e}")
